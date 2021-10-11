@@ -1,19 +1,19 @@
 import CustomImage from '~/common/components/CustomImage';
 import CustomLink from '~/common/components/CustomLink';
 import PostCard from '~/common/components/PostCard';
-import { post, posts } from '~/common/utils/data';
+import httpRequest from '~/common/utils/httpRequest';
 import timeFormat from '~/common/utils/timeFormat';
 import MainLayout from '~/layouts/MainLayout';
 
-const Post = () => {
+const Post = ({ post, relatedPosts }) => {
 	return (
 		<MainLayout>
 			<div className="grid grid-cols-1 gap-8">
 				<div className="border-b-4">
 					<article>
-						{post.imageUrl && (
+						{post.data.imageUrl && (
 							<CustomImage
-								src={post.imageUrl}
+								src={post.data.imageUrl}
 								className=""
 								alt="Cover Image"
 								layout="responsive"
@@ -24,14 +24,14 @@ const Post = () => {
 						)}
 						<div className="py-4">
 							<div className="mb-4">
-								<h1 className="text-gray-900 text-3xl md:text-5xl font-medium">{post.title}</h1>
+								<h1 className="text-gray-900 text-3xl md:text-5xl font-medium">{post.data.title}</h1>
 							</div>
 							<div className="flex items-center">
 								<CustomLink href="/" className="block relative">
 									<div className="h-12 w-12 relative">
 										<CustomImage
-											alt={post.user.userName}
-											src={post.user.avatarUrl}
+											alt={post.data.user.userName}
+											src={post.data.user.avatarUrl}
 											layout="fill"
 											objectFit="cover"
 											className="rounded-full"
@@ -40,10 +40,10 @@ const Post = () => {
 								</CustomLink>
 								<div className="flex flex-col justify-between ml-2">
 									<CustomLink href="/">
-										<p className="text-gray-800 font-bold">{post.user.userName}</p>
+										<p className="text-gray-800 font-bold">{post.data.user.userName}</p>
 									</CustomLink>
 									<p className="text-gray-400">
-										<time dateTime={post.createdAt}>{timeFormat(post.createdAt)}</time> - 666 min read
+										<time dateTime={post.data.createdAt}>{timeFormat(post.data.createdAt)}</time> - 666 min read
 									</p>
 								</div>
 							</div>
@@ -61,10 +61,10 @@ const Post = () => {
 									id rhoncus erat leo vel
 								</p>
 							</div>
-							{post.tags.length && (
+							{post.data.tags.length && (
 								<div className="flex flex-wrap justify-starts items-center mb-1">
 									<span className="mr-1 mb-1">Tags:</span>
-									{post.tags.map((tag) => (
+									{post.data.tags.map((tag) => (
 										<CustomLink
 											href={`/tag/${tag.slug}`}
 											className="text-xs mr-1 mb-1 py-1.5 px-4 text-gray-600 bg-gray-200 hover:bg-gray-300 hover:text-gray-700 rounded-2xl"
@@ -76,10 +76,10 @@ const Post = () => {
 									))}
 								</div>
 							)}
-							{post.categories.length && (
+							{post.data.categories.length && (
 								<div className="flex flex-wrap justify-starts items-center">
 									<span className="mr-1 mb-1">Categories:</span>
-									{post.categories.map((tag) => (
+									{post.data.categories.map((tag) => (
 										<CustomLink
 											href={`/tag/${tag.slug}`}
 											className="text-xs mr-1 mb-1 py-1.5 px-4 text-gray-600 bg-gray-200 hover:bg-gray-300 hover:text-gray-700 rounded-2xl"
@@ -98,7 +98,7 @@ const Post = () => {
 						<h4 className="text-gray-900 text-2xl font-medium">Related articles</h4>
 					</div>
 					<div className="grid grid-cols-1 gap-8">
-						{posts.length && posts.map((post) => <PostCard post={post} key={post.id} />)}
+						{relatedPosts.data.length && relatedPosts.data.map((post) => <PostCard post={post} key={post.id} />)}
 					</div>
 				</div>
 			</div>
@@ -107,11 +107,32 @@ const Post = () => {
 };
 
 export async function getServerSideProps({ query }) {
-	return {
-		props: {
-			query
+	try {
+		const [resPost, resRelatedPosts] = await Promise.all([
+			httpRequest.get({
+				url: `/posts/${query.slug}`
+			}),
+			httpRequest.get({
+				url: `/posts`,
+				params: {
+					offset: 0,
+					limit: 10
+				}
+			})
+		]);
+		if (resPost.data.success && resRelatedPosts.data.success) {
+			return {
+				props: {
+					post: resPost.data,
+					relatedPosts: resRelatedPosts.data
+				}
+			};
 		}
-	};
+	} catch (err) {
+		return {
+			notFound: true
+		};
+	}
 }
 
 export default Post;

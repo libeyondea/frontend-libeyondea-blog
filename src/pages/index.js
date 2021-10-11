@@ -1,28 +1,44 @@
 import Pagination from '~/common/components/Pagination';
 import PostCard from '~/common/components/PostCard';
-import { posts } from '~/common/utils/data';
+import httpRequest from '~/common/utils/httpRequest';
+import pageNumber from '~/common/utils/pageNumber';
 import MainLayout from '~/layouts/MainLayout';
 
-const Home = () => {
+const Home = ({ posts }) => {
 	return (
 		<MainLayout>
 			<div className="mb-8">
-				<p className="text-4xl font-bold text-gray-800">Lastest posts</p>
+				<h2 className="text-4xl font-bold text-gray-800">Lastest posts</h2>
 			</div>
 			<div className="grid grid-cols-1 gap-8">
-				{!posts.length ? <div>No posts</div> : posts.map((post) => <PostCard post={post} key={post.id} />)}
-				<Pagination total={6666} limit={10} />
+				{!posts.data.length ? <div>No posts</div> : posts.data.map((post) => <PostCard post={post} key={post.id} />)}
+				<Pagination total={posts.pagination.total} limit={10} />
 			</div>
 		</MainLayout>
 	);
 };
 
 export async function getServerSideProps({ query }) {
-	return {
-		props: {
-			query
+	try {
+		const resPosts = await httpRequest.get({
+			url: '/posts',
+			params: {
+				offset: (pageNumber(query.page) - 1) * 10,
+				limit: 10
+			}
+		});
+		if (resPosts.data.success) {
+			return {
+				props: {
+					posts: resPosts.data
+				}
+			};
 		}
-	};
+	} catch (err) {
+		return {
+			notFound: true
+		};
+	}
 }
 
 export default Home;

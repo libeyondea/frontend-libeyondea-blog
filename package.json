@@ -25,14 +25,14 @@
 	},
 	"devDependencies": {
 		"@tailwindcss/typography": "^0.4.1",
-		"autoprefixer": "^10.3.4",
+		"autoprefixer": "^10.3.7",
 		"eslint": "7.32.0",
 		"eslint-config-next": "11.1.2",
 		"eslint-config-prettier": "^8.3.0",
 		"eslint-plugin-prettier": "^4.0.0",
 		"eslint-plugin-simple-import-sort": "^7.0.0",
-		"postcss": "^8.3.6",
+		"postcss": "^8.3.9",
 		"prettier": "^2.4.1",
-		"tailwindcss": "^2.2.15"
+		"tailwindcss": "^2.2.16"
 	}
 }

@@ -1,9 +1,9 @@
 import axios from 'axios';
 
 const httpRequest = {
-	get: ({ baseUrl = process.env.API_URL, url, token, params }) => {
+	get: ({ baseUrl = process.env.NEXT_PUBLIC_API_URL, url, token, params }) => {
 		return axios({
-			timeout: process.env.REQUEST.TIMEOUT,
+			timeout: process.env.NEXT_PUBLIC_REQUEST_TIMEOUTL,
 			method: 'get',
 			baseURL: baseUrl,
 			url: url,
@@ -15,9 +15,9 @@ const httpRequest = {
 			params: params
 		});
 	},
-	post: ({ baseUrl = process.env.API_URL, url, token, data }) => {
+	post: ({ baseUrl = process.env.NEXT_PUBLIC_API_URL, url, token, data }) => {
 		return axios({
-			timeout: process.env.REQUEST.TIMEOUT,
+			timeout: process.env.NEXT_PUBLIC_REQUEST_TIMEOUTL,
 			method: 'post',
 			baseURL: baseUrl,
 			url: url,
@@ -29,9 +29,9 @@ const httpRequest = {
 			data: data
 		});
 	},
-	put: ({ baseUrl = process.env.API_URL, url, token, data }) => {
+	put: ({ baseUrl = process.env.NEXT_PUBLIC_API_URL, url, token, data }) => {
 		return axios({
-			timeout: process.env.REQUEST.TIMEOUT,
+			timeout: process.env.NEXT_PUBLIC_REQUEST_TIMEOUTL,
 			method: 'put',
 			baseURL: baseUrl,
 			url: url,
@@ -43,9 +43,9 @@ const httpRequest = {
 			data: data
 		});
 	},
-	delete: ({ baseUrl = process.env.API_URL, url, token, params }) => {
+	delete: ({ baseUrl = process.env.NEXT_PUBLIC_API_URL, url, token, params }) => {
 		return axios({
-			timeout: process.env.REQUEST.TIMEOUT,
+			timeout: process.env.NEXT_PUBLIC_REQUEST_TIMEOUTL,
 			method: 'delete',
 			baseURL: baseUrl,
 			url: url,
@@ -57,7 +57,7 @@ const httpRequest = {
 			params: params
 		});
 	},
-	upload: ({ baseUrl = process.env.API_URL, url, token, data, files }) => {
+	upload: ({ baseUrl = process.env.NEXT_PUBLIC_API_URL, url, token, data, files }) => {
 		const formData = new FormData();
 		if (data) {
 			for (let field in data) {
@@ -72,7 +72,7 @@ const httpRequest = {
 			}
 		}
 		return axios({
-			timeout: process.env.REQUEST.TIMEOUT,
+			timeout: process.env.NEXT_PUBLIC_REQUEST_TIMEOUTL,
 			method: 'post',
 			baseURL: baseUrl,
 			url: url,
